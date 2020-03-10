@@ -10,7 +10,8 @@ const INITIAL_STATE={
     id:0,
     loading:false,
     islogin:false,
-    errormes:''
+    errormes:'',
+    role:''
 }
 
 

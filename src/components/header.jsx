@@ -3,7 +3,8 @@ import {
 MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavItem, MDBNavLink, MDBNavbarToggler, MDBCollapse, MDBFormInline,
 MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem
 } from "mdbreact";
-
+import {connect} from 'react-redux'
+import {FaUserCircle} from 'react-icons/fa'
 
 class NavbarPage extends Component {
     state = {
@@ -22,11 +23,17 @@ class NavbarPage extends Component {
                 </MDBNavbarBrand>
                 <MDBNavbarToggler onClick={this.toggleCollapse} />
                 <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
-                <MDBNavbarNav right className='mr-4' >
+                <MDBNavbarNav right className='mr-5' >
                     <MDBNavItem >
-                        <MDBNavLink to='/manageadmin'>
-                            manage Admin
-                        </MDBNavLink>
+                        {
+                            this.props.User.role==='admin'?
+                            <MDBNavLink to='/manageadmin'>
+                                manage Admin
+                            </MDBNavLink>
+                            :
+                            null
+                        }
+                            
                     </MDBNavItem>
                     <MDBNavItem>
                         {/* <MDBNavLink>
@@ -39,17 +46,22 @@ class NavbarPage extends Component {
                         </MDBNavLink> */}
                     </MDBNavItem>
                     <MDBNavItem>
-                    <MDBDropdown>
-                        <MDBDropdownToggle nav caret>
-                            <span >Dropdown</span>
-                        </MDBDropdownToggle>
-                        <MDBDropdownMenu >
-                            <MDBDropdownItem href="#!">Action</MDBDropdownItem>
-                            <MDBDropdownItem href="#!">Another Action</MDBDropdownItem>
-                            <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>
-                            <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>
-                        </MDBDropdownMenu>
-                    </MDBDropdown>
+                        {
+                            this.props.User.username?
+                            <MDBDropdown >
+                                <MDBDropdownToggle nav  caret>
+                                    <FaUserCircle/> hallo, {this.props.User.username}
+                                </MDBDropdownToggle>
+                                <MDBDropdownMenu className='dropdown1' >
+                                    <MDBDropdownItem href="#!">Action</MDBDropdownItem>
+                                    <MDBDropdownItem href="#!">Another Action</MDBDropdownItem>
+                                    <MDBDropdownItem href="#!"></MDBDropdownItem>
+                                    {/* <MDBDropdownItem href="#!">Something else here</MDBDropdownItem> */}
+                                </MDBDropdownMenu>
+                            </MDBDropdown>
+                            :
+                            null
+                        }
                     </MDBNavItem>
                 </MDBNavbarNav>
                 </MDBCollapse>
@@ -58,4 +70,10 @@ class NavbarPage extends Component {
     }
 }
 
-export default NavbarPage;
+const MapstatetoProps=(state)=>{
+    return{
+        User:state.Auth
+    }
+}
+ 
+export default connect(MapstatetoProps)(NavbarPage);

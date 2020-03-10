@@ -9,7 +9,7 @@ class Home extends Component {
         if(this.props.islogin){
             return (
                 <div>
-                    <h1> INI Home  </h1>
+                    <h1>ini home</h1>
                 </div>
               );
         }

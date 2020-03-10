@@ -10,6 +10,8 @@ import { API_URL } from './supports/ApiUrl';
 import { KeepLogin } from './redux/actions';
 import {connect} from 'react-redux'
 import ManageAdmin from './pages/manageadmin'
+import Norfound from './pages/notfound';
+
 function App({KeepLogin}) {
 
   const [Loading,setLoading]=useState(true)
@@ -25,6 +27,8 @@ function App({KeepLogin}) {
       }).finally(()=>{
         setLoading(false)
       })
+    }else{
+      setLoading(false)
     }
   },[])
 
@@ -38,6 +42,7 @@ function App({KeepLogin}) {
         <Route path='/' exact component={Home}/>
         <Route path='/login' exact component={Login}/>
         <Route path='/manageadmin' exact component={ManageAdmin}/>
+        <Route path='/*' component={Norfound}/>
       </Switch>
     </div>
   );

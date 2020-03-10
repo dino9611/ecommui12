@@ -5,3 +5,7 @@
 .hovererr:hover{
   cursor: pointer;
 }
+
+.dropdown1{
+  width: 100px !important
+}

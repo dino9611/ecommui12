@@ -4,19 +4,27 @@ import Axios from 'axios';
 import { API_URL } from '../supports/ApiUrl';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import {connect} from 'react-redux'
+import {Redirect} from 'react-router-dom'
 const MySwal = withReactContent(Swal)
 
 class ManageAdmin extends Component {
     state = {
         products:[],
         isModaladdOpen:false,
-        indexdelete:-1
+        isModaleditopen:false,
+        indexedit:0,
+        indexdelete:-1,
+        categories:[]
     }
 
     componentDidMount(){
-        Axios.get(`${API_URL}/products`)
+        Axios.get(`${API_URL}/products?_expand=kategori`)
         .then((res)=>{
-            this.setState({products:res.data})
+            Axios.get(`${API_URL}/kategoris`)
+            .then((kategoris)=>{
+                this.setState({products:res.data,categories:kategoris.data})
+            })
         }).catch((err)=>{
             console.log(err)
         })
@@ -26,6 +34,9 @@ class ManageAdmin extends Component {
         this.setState({isModaladdOpen:!this.state.isModaladdOpen})
     }
 
+    toggleedit=()=>{
+        this.setState({isModaleditopen:!this.state.isModaleditopen})
+    }
 
     onSaveaddDataClick=()=>{
         var namaadd=this.refs.namaadd.value
@@ -38,14 +49,14 @@ class ManageAdmin extends Component {
             name:namaadd,
             image:imageadd,
             stok:stokeadd,
-            categoryId:categoryadd,
+            kategoriId:categoryadd,
             harga:hargaadd,
             deskripsi:deskripsiadd
         }
         Axios.post(`${API_URL}/products`,obj)
         .then((res)=>{
             console.log(res.data)
-            Axios.get(`${API_URL}/products`)
+            Axios.get(`${API_URL}/products?_expand=kategori`)
             .then((resakhir)=>{
                 this.setState({products:resakhir.data,isModaladdOpen:false})
             }).catch((err)=>{
@@ -57,7 +68,7 @@ class ManageAdmin extends Component {
     }
 
     deleteconfirm=(index,id)=>{
-        Swal.fire({
+        MySwal.fire({
             title: `Are you sure wanna delete ${this.state.products[index].name} ?`,
             text: "You won't be able to revert this!",
             icon: 'warning',
@@ -69,7 +80,7 @@ class ManageAdmin extends Component {
             if (result.value) {
               Axios.delete(`${API_URL}/products/${id}`)
               .then((res)=>{
-                  Swal.fire(
+                  MySwal.fire(
                     'Deleted!',
                     'Your file has been deleted.',
                     'success'
@@ -87,7 +98,38 @@ class ManageAdmin extends Component {
             }
           })
     }
+    onsaveEditClick=()=>{
+        var namaedit=this.refs.namaedit.value
+        var imageedit=this.refs.imageedit.value
+        var stokeedit=parseInt(this.refs.stokeedit.value)
+        var categoryedit=parseInt(this.refs.categoryedit.value)
+        var hargaedit=parseInt(this.refs.hargaedit.value)
+        var deskripsiedit=this.refs.deskripsiedit.value
+        var obj={
+            name:namaedit,
+            image:imageedit,
+            stok:stokeedit,
+            kategoriId:categoryedit,
+            harga:hargaedit,
+            deskripsi:deskripsiedit
+        }
+        var id=this.state.products[this.state.indexedit].id
+        console.log(obj,id)
+        Axios.put(`${API_URL}/products/${id}`,obj)
+        .then((res)=>{
+            // console.log(res.data)
+            Axios.get(`${API_URL}/products?_expand=kategori`)
+            .then((resakhir)=>{
+                this.setState({products:resakhir.data,isModaleditopen:false})
+            }).catch((err)=>{
+                console.log(err)
+            })
+        })
 
+    }
+    onEditClick=(index)=>{
+        this.setState({indexedit:index,isModaleditopen:true})
+    }
     renderProducts=()=>{
         const {products} =this.state 
         return products.map((val,index)=>{
@@ -97,11 +139,11 @@ class ManageAdmin extends Component {
                     <td>{val.name}</td>
                     <td><img src={val.image} alt={val.name} width='150' height='200px'/></td>
                     <td>{val.stok}</td>
-                    <td>{val.categoryId}</td>
+                    <td>{val.kategori.nama}</td>
                     <td>{val.harga}</td>
                     <td>{val.deskripsi}</td>
                     <td>
-                        <button className='btn btn-primary'>Edit</button>
+                        <button className='btn btn-primary' onClick={()=>this.onEditClick(index)} >Edit</button>
                         <button className='btn btn-danger' onClick={()=>this.deleteconfirm(index,val.id)}>Delete</button>
                     </td>
                 </tr>
@@ -109,51 +151,87 @@ class ManageAdmin extends Component {
         })
     }
 
-    render() { 
-        return ( 
-            <div>
-                <Modal isOpen={this.state.isModaladdOpen} toggle={this.toogleadd}>
-                    <ModalHeader toggle={this.toogleadd}>Add data</ModalHeader>
-                    <ModalBody>
-                        <input type="text" ref='namaadd' placeholder='Product name' className='form-control mt-2 '/>
-                        <input type="text" ref='imageadd' placeholder='Url Image' className='form-control mt-2'/>
-                        <input type="number" ref='stokeadd' placeholder='jumlah stok' className='form-control mt-2'/>
-                        <select ref='categoryadd' className='form-control mt-2'>
-                            <option value="" hidden>Pilih category</option>
-                            <option value="1" >Category 1</option>
-                            <option value="2" >Category 2</option>
-                            <option value="3" >Category 3</option>
-                        </select>
-                        <input type="number" ref='hargaadd' placeholder='Harga ' className='form-control mt-2'/>
-                        <textarea cols="20" rows="5" ref='deskripsiadd' className='form-control mt-2' placeholder='deskripsi' ></textarea>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="primary" onClick={this.onSaveaddDataClick}>Save</Button>
-                        <Button color="secondary" onClick={this.toogleadd}>Cancel</Button>
-                    </ModalFooter>
-                </Modal>
-                <button className='btn btn-primary' onClick={this.toogleadd}>Add data</button>
-                <Table striped>
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Name</th>
-                            <th>image</th>
-                            <th>stok</th>
-                            <th>Category</th>
-                            <th>Harga</th>
-                            <th>Deskripsi</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {this.renderProducts()}
-                    </tbody>
-                </Table>
-
-            </div>
-         );
+    rendercategprytoadd=()=>{
+        return this.state.categories.map((val,index)=>{
+            return <option key={index} value={val.id}>{val.nama}</option>
+        })
+    }
+    
+    render() {
+        const {indexedit,products}=this.state 
+        if(this.props.User.role==='admin'){
+            return ( 
+                <div>
+                    <Modal isOpen={this.state.isModaladdOpen} toggle={this.toogleadd}>
+                        <ModalHeader toggle={this.toogleadd}>Add data</ModalHeader>
+                        <ModalBody>
+                            <input type="text" ref='namaadd' placeholder='Product name' className='form-control mt-2 '/>
+                            <input type="text" ref='imageadd' placeholder='Url Image' className='form-control mt-2'/>
+                            <input type="number" ref='stokeadd' placeholder='jumlah stok' className='form-control mt-2'/>
+                            <select ref='categoryadd' className='form-control mt-2'>
+                                <option value="" hidden>Pilih category</option>
+                                {this.rendercategprytoadd()}
+                            </select>
+                            <input type="number" ref='hargaadd' placeholder='Harga ' className='form-control mt-2'/>
+                            <textarea cols="20" rows="5" ref='deskripsiadd' className='form-control mt-2' placeholder='deskripsi' ></textarea>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button color="primary" onClick={this.onSaveaddDataClick}>Save</Button>
+                            <Button color="secondary" onClick={this.toogleadd}>Cancel</Button>
+                        </ModalFooter>
+                    </Modal>
+                    {
+                    this.state.products.length?
+                    <Modal isOpen={this.state.isModaleditopen} toggle={this.toggleedit}>
+                        <ModalHeader toggle={this.toggleedit}>edit data {products[indexedit].name}</ModalHeader>
+                        <ModalBody>
+                            <input type="text" ref='namaedit' defaultValue={products[indexedit].name} placeholder='Product name' className='form-control mt-2 '/>
+                            <input type="text" ref='imageedit' defaultValue={products[indexedit].image} placeholder='Url Image' className='form-control mt-2'/>
+                            <input type="number" ref='stokeedit' defaultValue={products[indexedit].stok} placeholder='jumlah stok' className='form-control mt-2'/>
+                            <select ref='categoryedit' defaultValue={products[indexedit].kategoriId} className='form-control mt-2'>
+                                <option value="" hidden>Pilih category</option>
+                                {this.rendercategprytoadd()}
+                            </select>
+                            <input type="number" defaultValue={products[indexedit].harga} ref='hargaedit' placeholder='Harga ' className='form-control mt-2'/>
+                            <textarea cols="20" rows="5" defaultValue={products[indexedit].deskripsi} ref='deskripsiedit' className='form-control mt-2' placeholder='deskripsi' ></textarea>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button color="primary" onClick={this.onsaveEditClick}>Save</Button>
+                            <Button color="secondary" onClick={this.toggleedit}>Cancel</Button>
+                        </ModalFooter>
+                    </Modal>
+                    :
+                    null
+                    }
+                    <button className='btn btn-primary' onClick={this.toogleadd}>Add data</button>
+                    <Table striped>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Name</th>
+                                <th>image</th>
+                                <th>stok</th>
+                                <th>Category</th>
+                                <th>Harga</th>
+                                <th>Deskripsi</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {this.renderProducts()}
+                        </tbody>
+                    </Table>
+    
+                </div>
+             );
+        }else{
+            return <Redirect to='/notfound'/>
+        }
     }
 }
- 
-export default ManageAdmin;
+const MapstatetoProps=(state)=>{
+    return{
+        User:state.Auth
+    }
+}
+export default connect(MapstatetoProps)(ManageAdmin);
