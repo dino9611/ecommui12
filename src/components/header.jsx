@@ -5,7 +5,7 @@ MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem
 } from "mdbreact";
 import {connect} from 'react-redux'
 import {FaUserCircle} from 'react-icons/fa'
-
+import {BukanHome,IniHome} from './../redux/actions'
 class NavbarPage extends Component {
     state = {
         isOpen: false
@@ -15,15 +15,18 @@ class NavbarPage extends Component {
         this.setState({ isOpen: !this.state.isOpen });
     }
 
+ 
+
     render() {
+        console.log(this.props.Header)
         return (
-            <MDBNavbar color="blue" dark expand="md">
+            <MDBNavbar color="blue" transparent={this.props.Header} scrolling className='bordernav' dark fixed='top' expand="md">
                 <MDBNavbarBrand href='/'>
                     <strong className="white-text">MiniMales</strong>
                 </MDBNavbarBrand>
                 <MDBNavbarToggler onClick={this.toggleCollapse} />
                 <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
-                <MDBNavbarNav right className='mr-5' >
+                <MDBNavbarNav tag='div' right className='mr-5' >
                     <MDBNavItem >
                         {
                             this.props.User.role==='admin'?
@@ -49,7 +52,7 @@ class NavbarPage extends Component {
                         {
                             this.props.User.username?
                             <MDBDropdown >
-                                <MDBDropdownToggle nav  caret>
+                                <MDBDropdownToggle nav className='warnanav' >
                                     <FaUserCircle/> hallo, {this.props.User.username}
                                 </MDBDropdownToggle>
                                 <MDBDropdownMenu className='dropdown1' >
@@ -72,8 +75,9 @@ class NavbarPage extends Component {
 
 const MapstatetoProps=(state)=>{
     return{
-        User:state.Auth
+        User:state.Auth,
+        Header:state.Header.ishome
     }
 }
  
-export default connect(MapstatetoProps)(NavbarPage);
+export default connect(MapstatetoProps,{IniHome,BukanHome})(NavbarPage);

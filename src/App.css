@@ -9,3 +9,13 @@
 .dropdown1{
   width: 100px !important
 }
+
+.warnanav{
+  color: white
+}
+.warnanav:hover{
+  color: white !important
+}
+.navbar { 
+  box-shadow: none !important; 
+}

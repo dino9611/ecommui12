@@ -1,6 +1,7 @@
 import {combineReducers} from 'redux'
 import Authreducers from './Authreducers'
-
+import HeaderReducers from './Headerreducers'
 export default combineReducers({
-    Auth:Authreducers
+    Auth:Authreducers,
+    Header:HeaderReducers
 })

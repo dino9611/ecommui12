@@ -86,7 +86,7 @@ class ManageAdmin extends Component {
                     'success'
                   ).then((result)=>{
                       if(result.value){
-                          Axios.get(`${API_URL}/products`)
+                          Axios.get(`${API_URL}/products?_expand=kategori`)
                           .then((res1)=>{
                             this.setState({products:res1.data})
                           })
@@ -161,7 +161,7 @@ class ManageAdmin extends Component {
         const {indexedit,products}=this.state 
         if(this.props.User.role==='admin'){
             return ( 
-                <div>
+                <div className='pt-5'>
                     <Modal isOpen={this.state.isModaladdOpen} toggle={this.toogleadd}>
                         <ModalHeader toggle={this.toogleadd}>Add data</ModalHeader>
                         <ModalBody>
