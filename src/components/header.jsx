@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {
-MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavItem, MDBNavLink, MDBNavbarToggler, MDBCollapse, MDBFormInline,
+MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavItem, MDBNavLink, MDBNavbarToggler, MDBCollapse,
 MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem
 } from "mdbreact";
 import {connect} from 'react-redux'
@@ -20,9 +20,9 @@ class NavbarPage extends Component {
     render() {
         console.log(this.props.Header)
         return (
-            <MDBNavbar color="blue" transparent={this.props.Header} scrolling className='bordernav' dark fixed='top' expand="md">
+            <MDBNavbar color="black" transparent={this.props.Header} scrolling className='bordernav' dark fixed='top' expand="md">
                 <MDBNavbarBrand href='/'>
-                    <strong className="white-text">MiniMales</strong>
+                    <strong className={'white-text'}>MiniMales</strong>
                 </MDBNavbarBrand>
                 <MDBNavbarToggler onClick={this.toggleCollapse} />
                 <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
@@ -39,9 +39,15 @@ class NavbarPage extends Component {
                             
                     </MDBNavItem>
                     <MDBNavItem>
-                        {/* <MDBNavLink>
-                            adsadsa
-                        </MDBNavLink> */}
+                        {
+                            this.props.User.islogin?
+                            null
+                            :
+                            <MDBNavLink to='/login'>
+                                Login
+                            </MDBNavLink>
+
+                        }
                     </MDBNavItem>
                     <MDBNavItem>
                         {/* <MDBNavLink>

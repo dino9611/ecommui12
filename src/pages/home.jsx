@@ -3,14 +3,16 @@ import {connect} from 'react-redux'
 import { MDBCarousel,  MDBCarouselInner, MDBCarouselItem, MDBView, MDBMask} from "mdbreact";
 import {Redirect} from 'react-router-dom'
 import {
-    Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button
+    Card, CardBody,
+    CardTitle, CardSubtitle
   } from 'reactstrap';
 import Numeral from 'numeral'
 import Axios from 'axios'
 import {API_URL} from './../supports/ApiUrl'
 import {FaArrowAltCircleRight} from 'react-icons/fa'
 import {BukanHome,IniHome} from './../redux/actions'
+import {FaCartPlus} from 'react-icons/fa'
+import {Link} from 'react-router-dom'
 
 class Home extends Component {
     state = {
@@ -65,7 +67,12 @@ class Home extends Component {
                 <div key={index} className='p-3' style={{width:'20%'}}>
                     <Card>
                         <div style={{height:300,width:'100%'}}>
-                            <img src={val.image} height='100%' width='100%' alt=""/>  
+                            <img src={val.image} height='100%' width='100%' alt=""/>
+                            <div className='kotakhitam'>
+                                <Link to={`/productdetail/${val.id}`} className='tombolebuynow'>
+                                    <button className='tomboldalam'><FaCartPlus/></button>
+                                </Link>
+                            </div>  
                         </div>
                         <CardBody style={{height:150}}>
                             <CardTitle style={{fontWeight:'bold'}} className='mb-2'>{val.name}</CardTitle>
@@ -79,31 +86,26 @@ class Home extends Component {
     }
 
     render() {
-        if(this.props.islogin){
-            return (
-                <div>
-                    <MDBCarousel
-                        activeItem={1}
-                        length={this.state.photos.length}
-                        interval={1800}
-                        showIndicators={false}
-                        showControls={false}
-                    >
-                        <MDBCarouselInner>
-                            {this.renderphoto()}
-                        </MDBCarouselInner>
-                    </MDBCarousel>
-                    <div className='px-5 pt-3'>
-                        <div>Best seller <FaArrowAltCircleRight/></div>
-                        <div className="d-flex ">
-                            {this.renderProducts()}
-                        </div>
+        return (
+            <div>
+                <MDBCarousel
+                    activeItem={1}
+                    length={this.state.photos.length}
+                    interval={1800}
+                    showIndicators={false}
+                    showControls={false}
+                >
+                    <MDBCarouselInner>
+                        {this.renderphoto()}
+                    </MDBCarouselInner>
+                </MDBCarousel>
+                <div className='px-5 pt-3'>
+                    <div>Best seller <FaArrowAltCircleRight/></div>
+                    <div className="d-flex ">
+                        {this.renderProducts()}
                     </div>
                 </div>
-              )
-        }
-        return(
-            <Redirect to='/login'/>
+            </div>
         )
     }
 }

@@ -11,7 +11,7 @@ import { KeepLogin } from './redux/actions';
 import {connect} from 'react-redux'
 import ManageAdmin from './pages/manageadmin'
 import Norfound from './pages/notfound';
-
+import Productdetail from './pages/productdetail'
 function App({KeepLogin}) {
 
   const [Loading,setLoading]=useState(true)
@@ -42,6 +42,7 @@ function App({KeepLogin}) {
         <Route path='/' exact component={Home}/>
         <Route path='/login' exact component={Login}/>
         <Route path='/manageadmin' exact component={ManageAdmin}/>
+        <Route path='/productdetail/:idprod' exact component={Productdetail}/>
         <Route path='/*' component={Norfound}/>
       </Switch>
     </div>
