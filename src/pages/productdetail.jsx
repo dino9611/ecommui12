@@ -5,6 +5,9 @@ import {changetoRupiah} from './../supports/changeToRp'
 import {connect} from 'react-redux'
 import {Modal,ModalBody,ModalFooter} from 'reactstrap'
 import {Redirect} from 'react-router-dom'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+const MySwal = withReactContent(Swal)
 
 const ProductDetail =(props)=>{
 
@@ -45,7 +48,49 @@ const ProductDetail =(props)=>{
     }
     const sendToCart=()=>{
         if(props.User.islogin&&props.User.role==='user'){
-
+            var objtransaction={
+                status:'oncart',
+                userId:props.User.id
+            }
+            Axios.get(`${API_URL}/transactions?status=oncart&userId=${props.User.id}`)
+            .then((res1)=>{
+                if(res1.data.length){
+                    var objdetails={
+                        transactionId:res1.data[0].id,
+                        productId:data.id,
+                        qty:qty
+                    }
+                    Axios.post(`${API_URL}/transactiondetails`,objdetails)
+                    .then((res3)=>{
+                        console.log(res3.data)
+                        MySwal.fire({
+                            icon: 'success',
+                            title: 'Berhasil masuk cart',
+                            // text: 'barang masuk ke cart',
+                          })
+                    })
+                }else{
+                    Axios.post(`${API_URL}/transactions`,objtransaction)
+                    .then((res2)=>{
+                        var objdetails={
+                            transactionId:res2.data.id,
+                            productId:data.id,
+                            qty:qty
+                        }
+                        Axios.post(`${API_URL}/transactiondetails`,objdetails)
+                        .then((res3)=>{
+                            console.log(res3.data)
+                            MySwal.fire({
+                                icon: 'success',
+                                title: 'Berhasil masuk cart',
+                                // text: 'barang masuk ke cart',
+                              })
+                        })
+                    })
+                }
+            }).catch((err)=>{
+                console.log(err)
+            })
         }else{
             setmodalopen(true)
         }

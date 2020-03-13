@@ -5,7 +5,9 @@ MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem
 } from "mdbreact";
 import {connect} from 'react-redux'
 import {FaUserCircle} from 'react-icons/fa'
+import {FiShoppingCart} from 'react-icons/fi'
 import {BukanHome,IniHome} from './../redux/actions'
+
 class NavbarPage extends Component {
     state = {
         isOpen: false
@@ -39,6 +41,11 @@ class NavbarPage extends Component {
                             
                     </MDBNavItem>
                     <MDBNavItem>
+                        <MDBNavLink to='/cart'>
+                            <FiShoppingCart style={{fontSize:20}}/> Cart 
+                        </MDBNavLink>
+                    </MDBNavItem>
+                    <MDBNavItem>
                         {
                             this.props.User.islogin?
                             null
@@ -49,11 +56,7 @@ class NavbarPage extends Component {
 
                         }
                     </MDBNavItem>
-                    <MDBNavItem>
-                        {/* <MDBNavLink>
-                            dasdas
-                        </MDBNavLink> */}
-                    </MDBNavItem>
+            
                     <MDBNavItem>
                         {
                             this.props.User.username?
