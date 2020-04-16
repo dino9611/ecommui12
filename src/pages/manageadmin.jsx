@@ -6,6 +6,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
+
 const MySwal = withReactContent(Swal)
 
 class ManageAdmin extends Component {

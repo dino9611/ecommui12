@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux'
 import { MDBCarousel,  MDBCarouselInner, MDBCarouselItem, MDBView, MDBMask} from "mdbreact";
-import {Redirect} from 'react-router-dom'
+
 import {
     Card, CardBody,
     CardTitle, CardSubtitle
@@ -101,6 +101,11 @@ class Home extends Component {
                 </MDBCarousel>
                 <div className='px-5 pt-3'>
                     <div>Best seller <FaArrowAltCircleRight/></div>
+                    <div>
+                        <Link to='/allproducts'>
+                            <button className='btn btn-primary'>AllProduct</button>
+                        </Link>
+                    </div>
                     <div className="d-flex ">
                         {this.renderProducts()}
                     </div>

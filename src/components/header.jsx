@@ -6,8 +6,8 @@ MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem
 import {connect} from 'react-redux'
 import {FaUserCircle} from 'react-icons/fa'
 import {FiShoppingCart} from 'react-icons/fi'
-import {BukanHome,IniHome} from './../redux/actions'
-
+import {BukanHome,IniHome,errormessageclear} from './../redux/actions'
+import {Link} from 'react-router-dom'
 class NavbarPage extends Component {
     state = {
         isOpen: false
@@ -16,7 +16,10 @@ class NavbarPage extends Component {
     toggleCollapse = () => {
         this.setState({ isOpen: !this.state.isOpen });
     }
-
+    onLogoutClick=()=>{
+        localStorage.removeItem('iduser')
+        this.props.errormessageclear()
+    }
  
 
     render() {
@@ -40,11 +43,26 @@ class NavbarPage extends Component {
                         }
                             
                     </MDBNavItem>
-                    <MDBNavItem>
-                        <MDBNavLink to='/cart'>
-                            <FiShoppingCart style={{fontSize:20}}/> Cart 
-                        </MDBNavLink>
-                    </MDBNavItem>
+                    {
+                        this.props.User.islogin &&this.props.User.role==='user' ?
+                        <MDBNavItem>
+                            <MDBNavLink to='/cart'>
+                                {this.props.User.cart} <FiShoppingCart style={{fontSize:20}}/> Cart 
+                            </MDBNavLink>
+                        </MDBNavItem>
+                        :
+                        null
+                    }
+                       {
+                        this.props.User.islogin &&this.props.User.role==='user'?
+                        <MDBNavItem>
+                            <MDBNavLink to='/history'>
+                                history
+                            </MDBNavLink>
+                        </MDBNavItem>
+                        :
+                        null
+                    }
                     <MDBNavItem>
                         {
                             this.props.User.islogin?
@@ -56,7 +74,26 @@ class NavbarPage extends Component {
 
                         }
                     </MDBNavItem>
-            
+                    <MDBNavItem>
+                        {
+                            this.props.User.islogin?
+                            null
+                            :
+                            <MDBNavLink to='/register'>
+                                Register
+                            </MDBNavLink>
+                        }
+                    </MDBNavItem>
+                    <MDBNavItem>
+                    {
+                            this.props.User.role==='admin'?
+                            <MDBNavLink to='/managetransaksi'>
+                                manage Transaksi
+                            </MDBNavLink>
+                            :
+                            null
+                        }
+                    </MDBNavItem>
                     <MDBNavItem>
                         {
                             this.props.User.username?
@@ -65,8 +102,16 @@ class NavbarPage extends Component {
                                     <FaUserCircle/> hallo, {this.props.User.username}
                                 </MDBDropdownToggle>
                                 <MDBDropdownMenu className='dropdown1' >
-                                    <MDBDropdownItem href="#!">Action</MDBDropdownItem>
-                                    <MDBDropdownItem href="#!">Another Action</MDBDropdownItem>
+                                {
+                                    this.props.User.islogin?
+                                    <MDBDropdownItem onClick={this.onLogoutClick}>
+                                        <Link to='/'>
+                                            Logout
+                                        </Link>
+                                    </MDBDropdownItem>
+                                    :
+                                    null
+                                }
                                     <MDBDropdownItem href="#!"></MDBDropdownItem>
                                     {/* <MDBDropdownItem href="#!">Something else here</MDBDropdownItem> */}
                                 </MDBDropdownMenu>
@@ -89,4 +134,4 @@ const MapstatetoProps=(state)=>{
     }
 }
  
-export default connect(MapstatetoProps,{IniHome,BukanHome})(NavbarPage);
+export default connect(MapstatetoProps,{IniHome,BukanHome,errormessageclear})(NavbarPage);

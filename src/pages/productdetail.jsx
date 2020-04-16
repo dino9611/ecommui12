@@ -7,6 +7,7 @@ import {Modal,ModalBody,ModalFooter} from 'reactstrap'
 import {Redirect} from 'react-router-dom'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import {CartChange} from './../redux/actions'
 const MySwal = withReactContent(Swal)
 
 const ProductDetail =(props)=>{
@@ -24,7 +25,7 @@ const ProductDetail =(props)=>{
         }).catch((err)=>{
             console.log(err)
         })
-    },[])
+    },[props.match.params.idprod])
     
     const qtychange=(e)=>{
         if(e.target.value===''){
@@ -60,14 +61,41 @@ const ProductDetail =(props)=>{
                         productId:data.id,
                         qty:qty
                     }
-                    Axios.post(`${API_URL}/transactiondetails`,objdetails)
-                    .then((res3)=>{
-                        console.log(res3.data)
-                        MySwal.fire({
-                            icon: 'success',
-                            title: 'Berhasil masuk cart',
-                            // text: 'barang masuk ke cart',
-                          })
+                    Axios.get(`${API_URL}/transactiondetails?transactionId=${res1.data[0].id}&&productId=${data.id}`)
+                    .then((res4)=>{
+                        if(res4.data.length){
+                            Axios.patch(`${API_URL}/transactiondetails/${res4.data[0].id}`,{
+                                qty:res4.data[0].qty+qty
+                            }).then((res5)=>{
+                                Axios.get(`${API_URL}/transactions?_embed=transactiondetails&userId=${props.User.id}&status=oncart`)
+                                .then((res2)=>{//gunanya untuk mennentukan jumlah dari cartnya
+                                    props.CartChange(res2.data[0].transactiondetails.length)  
+                                    MySwal.fire({
+                                        icon: 'success',
+                                        title: 'Berhasil masuk cart',
+                                        // text: 'barang masuk ke cart',
+                                    })
+                                }).catch((err)=>{
+                                    console.log(err)
+                                })
+                            })
+                        }else{
+                            Axios.post(`${API_URL}/transactiondetails`,objdetails)
+                            .then((res3)=>{
+                                console.log(res3.data)
+                                Axios.get(`${API_URL}/transactions?_embed=transactiondetails&userId=${props.User.id}&status=oncart`)
+                                .then((res2)=>{//gunanya untuk mennentukan jumlah dari cartnya
+                                    props.CartChange(res2.data[0].transactiondetails.length)  
+                                    MySwal.fire({
+                                        icon: 'success',
+                                        title: 'Berhasil masuk cart',
+                                        // text: 'barang masuk ke cart',
+                                    })
+                                }).catch((err)=>{
+                                    console.log(err)
+                                })
+                            })
+                        }
                     })
                 }else{
                     Axios.post(`${API_URL}/transactions`,objtransaction)
@@ -79,12 +107,17 @@ const ProductDetail =(props)=>{
                         }
                         Axios.post(`${API_URL}/transactiondetails`,objdetails)
                         .then((res3)=>{
-                            console.log(res3.data)
-                            MySwal.fire({
-                                icon: 'success',
-                                title: 'Berhasil masuk cart',
-                                // text: 'barang masuk ke cart',
-                              })
+                            Axios.get(`${API_URL}/transactions?_embed=transactiondetails&userId=${props.User.id}&status=oncart`)
+                            .then((res2)=>{
+                                props.CartChange(res2.data[0].transactiondetails.length)  
+                                MySwal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil masuk cart',
+                                    // text: 'barang masuk ke cart',
+                                })
+                            }).catch((err)=>{
+                                console.log(err)
+                            })
                         })
                     })
                 }
@@ -104,7 +137,7 @@ const ProductDetail =(props)=>{
         }
 
     }
-    const {name,image,seen,stok,harga}=data
+    const {name,image,stok,harga}=data
     if(redirectlog){
         return <Redirect to='/login'/>
     }
@@ -127,7 +160,7 @@ const ProductDetail =(props)=>{
                 <div className="row">
                     <div className="col-md-4 p-2">
                         <div className="product-detail">
-                            <img src={image} alt={name} width='100%' className='rounded'/>
+                            <img src={image} alt={name} height='600px' width='100%' className='rounded'/>
                         </div>
                     </div>
                     <div className="col-md-8 p-2">
@@ -194,4 +227,4 @@ const MapstatetoProps=(state)=>{
     }
 }
 
-export default connect(MapstatetoProps) (ProductDetail);
+export default connect(MapstatetoProps,{CartChange}) (ProductDetail);
