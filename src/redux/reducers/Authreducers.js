@@ -12,7 +12,10 @@ const INITIAL_STATE={
     islogin:false,
     errormes:'',
     cart:0,
-    role:''
+    role:'',
+    token:'',
+    password:'',
+    isverified:0
 }
 
 
@@ -26,6 +29,8 @@ export default (state=INITIAL_STATE,action)=>{
             return{...state,loading:false,errormes:action.payload}
         case 'ADDCART':
             return{...state,cart:action.payload}
+        case 'AFTER_VERIFIED':
+            return {...state,...action.payload}
         case 'ErrorClear':
             return INITIAL_STATE
         default:

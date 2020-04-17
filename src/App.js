@@ -7,7 +7,7 @@ import Home from './pages/home'
 import {Switch,Route} from 'react-router-dom'
 import Axios from 'axios';
 import { API_URL } from './supports/ApiUrl';
-import { KeepLogin, getdata } from './redux/actions';
+import { KeepLogin } from './redux/actions';
 import {connect} from 'react-redux'
 import ManageAdmin from './pages/manageadmin'
 import Norfound from './pages/notfound';
@@ -17,32 +17,29 @@ import Register from './pages/Register'
 import Allproducts from './pages/Allproduct'
 import ManageTransaksi from './pages/manageTransaksi';
 import History from './pages/history';
+import Verified from './pages/verified'
+import SendVerified from './pages/sendverified'
 
 function App({KeepLogin}) {
 
   const [Loading,setLoading]=useState(true)
 
   useEffect(()=>{
-    var id=localStorage.getItem('iduser')
-    if(id){
-      Axios.get(`${API_URL}/users/${id}`)
+    var token=localStorage.getItem('token')
+    if(token){
+      Axios.get(`${API_URL}/users/keeplogin`,{
+        headers:{
+          'Authorization':`Bearer ${token}`
+        }
+      })
       .then(res=>{
         console.log(res.data)
-        Axios.get(`${API_URL}/transactions?_embed=transactiondetails&userId=${res.data.id}&status=oncart`)
-        .then((res2)=>{
-          console.log(res2.data)
-            if(res2.data.length){
-              KeepLogin(res.data,res2.data[0].transactiondetails.length)
-            }else{
-              KeepLogin(res.data,0)  
-            }
-        }).catch((err)=>{
-            console.log(err)
-        }).finally(()=>{
-          setLoading(false)
-        })
+        KeepLogin(res.data,res.data.jumlahcart)
       }).catch((err)=>{
         console.log(err)
+      })
+      .finally(()=>{
+        setLoading(false)
       })
     }else{
       setLoading(false)
@@ -65,6 +62,8 @@ function App({KeepLogin}) {
         <Route path='/productdetail/:idprod' exact component={Productdetail}/>
         <Route path='/cart' exact component={Cart}/>
         <Route path='/history' exact component={History}/>
+        <Route path='/verified' exact component={Verified}/>
+        <Route path='/sendverified' exact component={SendVerified}/>
         <Route path='/*' component={Norfound}/>
       </Switch>
     </div>

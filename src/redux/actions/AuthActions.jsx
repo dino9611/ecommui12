@@ -20,26 +20,15 @@ export const LoginUser=({username,password})=>{
         if(username===''||password===''){//kalo ada input yang kosong
             dispatch({type:USER_LOGIN_FAILED,payload:'username atau password tidak terisi'})
         }else{
-            Axios.get(`${API_URL}/users`,{
+            Axios.get(`${API_URL}/users/login`,{
                 params:{
                     username:username,
-                    password:password
+                    password
                 }
-            })
-            .then((res)=>{
-                if(res.data.length){//user ada
-                    Axios.get(`${API_URL}/transactions?_embed=transactiondetails&userId=${res.data[0].id}&status=oncart`)
-                    .then((res1)=>{
-                        localStorage.setItem('iduser',res.data[0].id)
-                        if(res1.data.length){
-                            dispatch({type:USER_LOGIN_SUCCESS,payload:res.data[0],jumlahcart:res1.data[0].transactiondetails.length})                            
-                        }else{
-                            
-                            dispatch({type:USER_LOGIN_SUCCESS,payload:res.data[0],jumlahcart:0})
-                        }
-                    }).catch((err)=>{
-                        console.log(err)
-                    })
+            }).then((res)=>{
+                if(res.data.status){
+                    localStorage.setItem('token',res.data.token)
+                    dispatch({type:USER_LOGIN_SUCCESS,payload:res.data,jumlahcart:res.data.jumlahcart})
                 }else{
                     dispatch({type: USER_LOGIN_FAILED,payload:'username atau password tidak terdaftar'})
                 }
@@ -89,6 +78,12 @@ export const KeepLogin=(data,jumlahcart)=>{
         type:USER_LOGIN_SUCCESS,
         payload:data,
         jumlahcart:jumlahcart
+    }
+}
+export const afterVerified=(data)=>{
+    return{
+        type:'AFTER_VERIFIED',
+        payload:data
     }
 }
 export const CartChange=(data)=>{

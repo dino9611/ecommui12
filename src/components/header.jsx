@@ -112,6 +112,17 @@ class NavbarPage extends Component {
                                     :
                                     null
                                 }
+                                  <MDBDropdownItem>
+                                        {
+                                            this.props.User.isverified===0?
+                                            <Link to='/sendverified'>
+                                                <span style={{color:'red'}}>Unverified</span> 
+                                            </Link>
+                                            :
+                                            <span style={{color:'green'}}>verified</span>
+                                           
+                                        }
+                                    </MDBDropdownItem>
                                     <MDBDropdownItem href="#!"></MDBDropdownItem>
                                     {/* <MDBDropdownItem href="#!">Something else here</MDBDropdownItem> */}
                                 </MDBDropdownMenu>
@@ -130,7 +141,7 @@ class NavbarPage extends Component {
 const MapstatetoProps=(state)=>{
     return{
         User:state.Auth,
-        Header:state.Header.ishome
+        Header:state.Header.ishome,
     }
 }
  
