@@ -34,7 +34,7 @@ class NavbarPage extends Component {
                 <MDBNavbarNav tag='div' right className='mr-5' >
                     <MDBNavItem >
                         {
-                            this.props.User.role==='admin'?
+                            this.props.User.role===2?
                             <MDBNavLink to='/manageadmin'>
                                 manage Admin
                             </MDBNavLink>
@@ -44,7 +44,7 @@ class NavbarPage extends Component {
                             
                     </MDBNavItem>
                     {
-                        this.props.User.islogin &&this.props.User.role==='user' ?
+                        this.props.User.islogin &&this.props.User.role===1 ?
                         <MDBNavItem>
                             <MDBNavLink to='/cart'>
                                 {this.props.User.cart} <FiShoppingCart style={{fontSize:20}}/> Cart 
@@ -54,7 +54,7 @@ class NavbarPage extends Component {
                         null
                     }
                        {
-                        this.props.User.islogin &&this.props.User.role==='user'?
+                        this.props.User.islogin &&this.props.User.role===1?
                         <MDBNavItem>
                             <MDBNavLink to='/history'>
                                 history
@@ -86,7 +86,7 @@ class NavbarPage extends Component {
                     </MDBNavItem>
                     <MDBNavItem>
                     {
-                            this.props.User.role==='admin'?
+                            this.props.User.role===2?
                             <MDBNavLink to='/managetransaksi'>
                                 manage Transaksi
                             </MDBNavLink>
